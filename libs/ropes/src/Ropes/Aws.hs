@@ -34,6 +34,7 @@ import Control.Monad.IO.Class
 import Control.Monad.Trans.Resource
 import Control.Retry
 import Data.Aeson
+import Data.Aeson.Types (typeMismatch)
 import Data.ByteString (ByteString)
 import Data.Foldable (for_)
 import Data.IORef
@@ -49,6 +50,7 @@ import qualified Aws
 import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString.Lazy  as LB
 import qualified System.Logger         as Logger
+import qualified Data.Yaml             as Y
 
 import Prelude
 
@@ -58,11 +60,24 @@ import Prelude
 
 newtype AccessKeyId = AccessKeyId
     { unAccessKeyId :: ByteString }
-    deriving (Eq, Show)
+    deriving (Read, Eq, Show)
+
+instance FromJSON AccessKeyId where
+  parseJSON (Y.String s) =
+    pure $ AccessKeyId $ encodeUtf8 s
+  parseJSON v = typeMismatch "Aws.AccessKeyId" v
 
 newtype SecretAccessKey = SecretAccessKey
     { unSecretAccessKey :: ByteString }
-    deriving (Eq)
+    deriving (Read, Eq)
+
+instance Show SecretAccessKey where
+  show _ = "AWS Secret hidden"
+
+instance FromJSON SecretAccessKey where
+  parseJSON (Y.String s) =
+    pure $ SecretAccessKey $ encodeUtf8 s
+  parseJSON v = typeMismatch "Aws.SecretAccessKey" v
 
 data Auth
     = PermAuth Configuration

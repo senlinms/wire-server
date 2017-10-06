@@ -44,7 +44,7 @@ import Data.ByteString (ByteString)
 import Data.ByteString.Lazy (toStrict)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Monoid ((<>))
-import Data.Text (Text)
+import Data.Text (Text, toLower, unpack)
 import Data.Text.Encoding (decodeLatin1, decodeUtf8)
 import Data.Time (UTCTime)
 import Data.Time.Format (formatTime, defaultTimeLocale)
@@ -55,12 +55,21 @@ import Network.HTTP.Types
 import Prelude hiding (head, length)
 
 import qualified Data.List.NonEmpty as N
+import qualified Data.Yaml          as Y
 
 -- * Types
 
 newtype ApiKey = ApiKey ByteString
 newtype ApiSecret = ApiSecret ByteString
 data ApiEndpoint = Production | Sandbox
+    deriving (Show)
+
+instance FromJSON ApiEndpoint where
+  parseJSON (Y.String s) = case toLower s of
+    "sandbox" -> pure Sandbox
+    "production" -> pure Production
+    other -> fail $ "Unsupported Nexmo environment: " ++ unpack other
+  parseJSON v = typeMismatch "Nexmo.ApiEndpoint" v
 
 data Charset = GSM7 | GSM8 | UCS2 deriving (Eq, Show)
 
