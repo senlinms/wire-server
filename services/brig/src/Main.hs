@@ -4,10 +4,12 @@ import Brig.API
 import OpenSSL (withOpenSSL)
 
 import Brig.Options
+import Data.Maybe (fromMaybe)
 import Data.Monoid
 import Data.Yaml (decodeFileEither, ParseException)
 import Options.Applicative
 import System.Directory
+import System.Environment (getArgs)
 import System.IO (hPutStrLn, stderr)
 
 getOptions :: IO Opts
@@ -27,7 +29,11 @@ decodeConfigFile :: FilePath -> IO (Either ParseException Opts)
 decodeConfigFile = decodeFileEither
 
 parseConfigPath :: IO String
-parseConfigPath = execParser (info (helper <*> pathParser) desc)
+parseConfigPath = do
+  args <- getArgs
+  let result = getParseResult $ execParserPure defaultPrefs (info (helper <*> pathParser) desc) args
+      defaultPath = "/etc/wire/brig/brig.yaml"
+  pure $ fromMaybe defaultPath result
   where
     pathParser :: Parser String
     pathParser = strOption $

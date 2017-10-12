@@ -28,8 +28,10 @@ import qualified System.Logger         as Logger
 
 -- TODO: move to common lib
 
-data Endpoint = Endpoint String Word16
-  deriving (Show, Generic)
+data Endpoint = Endpoint
+    { epHost :: String
+    , epPort :: Word16
+    } deriving (Show, Generic)
 
 data Config = Config
   -- internal endpoints
@@ -48,7 +50,7 @@ decodeConfigFile = decodeFileEither
 
 runTests :: Either ParseException Config -> Either ParseException Opts.Opts -> IO ()
 runTests iConf bConf = do
-    let local = Endpoint "localhost"
+    let local p = Endpoint { epHost = "localhost", epPort = p }
     brig      <- mkRequest <$> Opts.optOrEnv confBrig iConf (local . read) "BRIG_WEB_PORT"
     cannon    <- mkRequest <$> Opts.optOrEnv confCannon iConf (local . read) "CANNON_WEB_PORT"
     galley    <- mkRequest <$> Opts.optOrEnv confGalley iConf (local . read) "GALLEY_WEB_PORT"
@@ -78,8 +80,8 @@ runTests iConf bConf = do
 
 main :: IO ()
 main = withOpenSSL $ do
-  iConf <- decodeConfigFile "/etc/wire/integration.yaml"
-  bConf <- decodeConfigFile "/etc/wire/brig.yaml"
+  iConf <- decodeConfigFile "/etc/wire/brig/integration.yaml"
+  bConf <- decodeConfigFile "/etc/wire/brig/brig.yaml"
 
   runTests iConf bConf
 

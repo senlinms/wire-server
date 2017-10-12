@@ -163,7 +163,7 @@ data Opts = Opts
 
     -- Runtime settings
     , optSettings :: !Settings
-    } deriving (Generic)
+    } deriving (Show, Generic)
 
 -- | Options that persist as runtime settings.
 data Settings = Settings
