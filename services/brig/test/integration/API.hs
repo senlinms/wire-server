@@ -62,7 +62,7 @@ newtype ConnectionLimit = ConnectionLimit Int64
 
 tests :: Either a Brig.Opts -> Manager -> Brig -> Cannon -> Galley -> IO TestTree
 tests conf p b c g = do
-    l <- Brig.optOrEnv (ConnectionLimit . Brig.setUserMaxConnections . Brig.optSettings) conf (ConnectionLimit . read) ""
+    l <- Brig.optOrEnv (ConnectionLimit . Brig.setUserMaxConnections . Brig.optSettings) conf (ConnectionLimit . read) "USER_CONNECTION_LIMIT"
     return $ testGroup "user"
         [ testGroup "account"
             [ test p "post /register - 201"                     $ testCreateUser b g
