@@ -32,16 +32,16 @@ parseConfigPath :: IO String
 parseConfigPath = do
   args <- getArgs
   let result = getParseResult $ execParserPure defaultPrefs (info (helper <*> pathParser) desc) args
-      defaultPath = "/etc/wire/brig/brig.yaml"
   pure $ fromMaybe defaultPath result
   where
+    defaultPath = "/etc/wire/brig/brig.yaml"
     pathParser :: Parser String
     pathParser = strOption $
                  long "config-file"
                  <> short 'c'
                  <> help "Config file to load"
                  <> showDefault
-                 <> value "/etc/wire/brig/brig.yaml"
+                 <> value defaultPath
     desc = header "Brig - User Service" <> fullDesc
 
 main :: IO ()

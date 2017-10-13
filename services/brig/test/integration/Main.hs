@@ -55,8 +55,8 @@ runTests iConf bConf = do
     cannon    <- mkRequest <$> Opts.optOrEnv confCannon iConf (local . read) "CANNON_WEB_PORT"
     galley    <- mkRequest <$> Opts.optOrEnv confGalley iConf (local . read) "GALLEY_WEB_PORT"
     turnFile  <- Opts.optOrEnv (Opts.servers . Opts.turn) bConf id "TURN_SERVERS"
-    casHost   <- Opts.optOrEnv (Opts.host . Opts.endpoint . Opts.cassandra) bConf pack "CASSANDRA_HOST"
-    casPort   <- Opts.optOrEnv (Opts.port . Opts.endpoint . Opts.cassandra) bConf read "CASSANDRA_PORT"
+    casHost   <- Opts.optOrEnv (Opts.host . Opts.endpoint . Opts.cassandra) bConf pack "BRIG_CASSANDRA_HOST"
+    casPort   <- Opts.optOrEnv (Opts.port . Opts.endpoint . Opts.cassandra) bConf read "BRIG_CASSANDRA_PORT"
 
     lg <- Logger.new Logger.defSettings
     db <- initCassandra (Opts.Endpoint casHost casPort) lg
