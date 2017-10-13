@@ -19,6 +19,7 @@ import Data.Misc (HttpsUrl)
 import Data.Monoid
 import Data.Scientific (toBoundedInteger)
 import Data.Text (Text)
+import Data.Text.Encoding (encodeUtf8)
 import Data.Time.Clock (DiffTime, secondsToDiffTime)
 import Data.Word (Word16, Word32)
 import Data.Yaml (FromJSON(..))
@@ -71,8 +72,8 @@ data AWSOpts = AWSOpts
     , internal_queue  :: Text
     , blacklist_table :: Text
     , prekey_table    :: Text
-    , awsKeyId     :: (Maybe Aws.AccessKeyId)
-    , awsSecretKey :: (Maybe Aws.SecretAccessKey)
+    , awsKeyId        :: (Maybe Aws.AccessKeyId)
+    , awsSecretKey    :: (Maybe Aws.SecretAccessKey)
     } deriving (Show, Generic)
 
 instance FromJSON AWSOpts where
@@ -203,7 +204,7 @@ optsParser :: Parser Opts
 optsParser =
   Opts <$>
   (Endpoint
-    <$> (option auto $
+    <$> (textOption $
           long "host"
           <> value "*4"
           <> showDefault
@@ -216,7 +217,7 @@ optsParser =
           <> help "Port to listen on")
   ) <*>
   (Endpoint
-    <$> (option auto $
+    <$> (textOption $
           long "galley-host"
           <> metavar "HOSTNAME"
           <> help "Galley hostname")
@@ -227,7 +228,7 @@ optsParser =
           <> help "Galley port")
   ) <*>
   (Endpoint
-    <$> (option auto $
+    <$> (textOption $
           long "gundeck-host"
           <> metavar "HOSTNAME"
           <> help "Gundeck hostname")
@@ -240,7 +241,7 @@ optsParser =
   (CassandraOpts
     <$>
     (Endpoint <$>
-      (option auto $
+      (textOption $
         long "cassandra-host"
         <> metavar "HOSTNAME"
         <> help "Cassandra hostname or address")
@@ -250,18 +251,18 @@ optsParser =
            <> metavar "PORT"
            <> help "Cassandra port")
     )
-    <*> (option auto $
+    <*> (textOption $
           long "cassandra-keyspace"
           <> metavar "STRING"
           <> help "Cassandra keyspace")
   ) <*>
   (ElasticSearchOpts
-    <$> (option auto $
+    <$> (textOption $
           long "elasticsearch-url"
           <> metavar "URL"
           <> help "Elasticsearch URL")
 
-    <*> (option auto $
+    <*> (textOption $
           long "elasticsearch-user-index"
           <> metavar "STRING"
           <> value "directory"
@@ -269,44 +270,48 @@ optsParser =
           <> help "The name of the ElasticSearch user index")
   ) <*>
   (AWSOpts
-    <$> (option auto $
+    <$> (textOption $
           long "aws-account-id"
           <> metavar "STRING"
           <> help "AWS Account ID")
 
-    <*> (option auto $
+    <*> (textOption $
           long "aws-ses-queue"
           <> metavar "STRING"
           <> help "Event feedback queue for SES (e.g. for email bounces and complaints)")
 
-    <*> (option auto $
+    <*> (textOption $
                 long "aws-internal-queue"
                 <> metavar "STRING"
                 <> help "Event queue for internal brig generated events (e.g. user deletion)")
 
-        <*> (option auto $
+        <*> (textOption $
                 long "aws-dynamo-blacklist"
                 <> metavar "STRING"
                 <> help "Dynamo table for storing blacklisted user keys")
 
-        <*> (option auto $
+        <*> (textOption $
                 long "aws-dynamo-prekeys"
                 <> metavar "STRING"
                 <> help "Dynamo table for storing prekey data")
 
-        <*> (option auto $
-                long "aws-access-key-id"
-                <> metavar "STRING"
-                <> help "AWS Access Key ID")
+        <*> (fmap (Aws.AccessKeyId . encodeUtf8) <$>
+                (optional . textOption $
+                    long "aws-access-key-id"
+                    <> metavar "STRING"
+                    <> help "AWS Access Key ID")
+            )
 
-        <*> (option auto $
-                long "aws-secret-access-key"
-                <> metavar "STRING"
-                <> help "AWS Secret Access Key")
+        <*> (fmap (Aws.SecretAccessKey . encodeUtf8) <$>
+                (optional . textOption $
+                    long "aws-secret-access-key"
+                    <> metavar "STRING"
+                    <> help "AWS Secret Access Key")
+            )
   ) <*>
   (EmailSMSOpts
     <$> (EmailSMSGeneralOpts <$>
-          (option auto $
+          (strOption $
             long "template-dir"
             <> metavar "FILE"
             <> help "Email/SMS/... template directory")
@@ -316,49 +321,49 @@ optsParser =
                 <> metavar "STRING"
                 <> help "Email sender address")
 
-          <*> (option auto $
+          <*> (textOption $
                 long "twilio-sender"
                 <> metavar "STRING"
                 <> help "Twilio sender identifier (number or messaging service ID")
         )
     <*> (EmailUserOpts <$>
-          (option auto $
+          (textOption $
             long "activation-url"
             <> metavar "URL"
             <> help "Activation URL template")
 
-          <*> (option auto $
+          <*> (textOption $
                 long "sms-activation-url"
                 <> metavar "URL"
                 <> help "SMS activation URL template")
 
-          <*> (option auto $
+          <*> (textOption $
                 long "password-reset-url"
                 <> metavar "URL"
                 <> help "Password reset URL template")
 
-          <*> (option auto $
+          <*> (textOption $
                 long "invitation-url"
                 <> metavar "URL"
                 <> help "Invitation URL template")
 
-          <*> (option auto $
+          <*> (textOption $
                 long "deletion-url"
                 <> metavar "URL"
                 <> help "Deletion URL template")
         )
     <*> (ProviderOpts <$>
-          (option auto $
+          (textOption $
             long "provider-home-url"
             <> metavar "URL"
             <> help "Provider Homepage URL")
 
-          <*> (option auto $
+          <*> (textOption $
                 long "provider-activation-url"
                 <> metavar "URL"
                 <> help "Provider Activation URL template")
 
-          <*> (option auto $
+          <*> (textOption $
                 long "provider-approval-url"
                 <> metavar "URL"
                 <> help "Provider Approval URL template")
@@ -369,18 +374,18 @@ optsParser =
                 <> help "Provider approval email recipient")
         )
     <*> (TeamOpts <$>
-         (option auto $
+         (textOption $
            long "team-invitation-url"
            <> metavar "URL"
            <> help "Team Invitation URL template")
-         <*> (option auto $
+         <*> (textOption $
                long "team-activation-url"
                <> metavar "URL"
                <> help "Team Activation URL template")
         )
   ) <*>
   (ZAuthOpts
-    <$> (option auto $
+    <$> (strOption $
           long "zauth-private-keys"
           <> metavar "FILE"
           <> help "zauth private key file"
@@ -426,13 +431,13 @@ optsParser =
         <> metavar "FILE"
         <> help "GeoDB file path")
   <*> (TurnOpts
-        <$> (option auto $
+        <$> (strOption $
                 long "turn-servers"
                 <> metavar "FILE"
                 <> help "Line separated file with IP addresses of the available turn servers"
                 <> action "file")
 
-        <*> (option auto $
+        <*> (strOption $
                 long "turn-secret"
                 <> metavar "FILE"
                 <> help "TURN shared secret file path"
@@ -455,22 +460,22 @@ settingsParser = Settings
                 <> value (ActivationTimeout (secondsToDiffTime 3600))
                 <> help "Activation timeout in seconds")
 
-        <*> (option auto $
+        <*> (textOption $
                 long "twilio-sid"
                 <> metavar "STRING"
                 <> help "Twilio SID")
 
-        <*> (option auto $
+        <*> (textOption $
                 long "twilio-token"
                 <> metavar "STRING"
                 <> help "Twilio API token")
 
-        <*> (option auto $
+        <*> (textOption $
                 long "nexmo-key"
                 <> metavar "STRING"
                 <> help "Nexmo API key")
 
-        <*> (option auto $
+        <*> (textOption $
                 long "nexmo-secret"
                 <> metavar "STRING"
                 <> help "Nexmo API secret")
@@ -483,17 +488,17 @@ settingsParser = Settings
                 <> help "Nexmo API environment: sandbox | production")
 
         <*> (optional $ Whitelist
-                <$> (option auto $
+                <$> (textOption $
                         long "whitelist-url"
                         <> help "URL of a service providing a whitelist of allowed email addresses and phone numbers.")
 
-                <*> (option auto $
+                <*> (textOption $
                         long "whitelist-user"
                         <> metavar "STRING"
                         <> value ""
                         <> help "Username for accessing the whitelist")
 
-                <*> (option auto $
+                <*> (textOption $
                         long "whitelist-pass"
                         <> metavar "STRING"
                         <> value ""
@@ -505,7 +510,7 @@ settingsParser = Settings
                 <> help "Max. number of sent/accepted connections per user."
                 <> value 1000)
 
-        <*> (option auto $
+        <*> (textOption $
                 long "cookie-domain"
                 <> metavar "STRING"
                 <> help "The domain to restrict cookies to.")

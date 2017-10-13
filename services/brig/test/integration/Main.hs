@@ -39,7 +39,7 @@ data Config = Config
   , confCannon    :: Endpoint
   , confGalley    :: Endpoint
 
-  , cert          :: FilePath
+  , provider      :: Provider.Config
   } deriving (Show, Generic)
 
 instance FromJSON Endpoint
@@ -64,7 +64,7 @@ runTests iConf bConf = do
 
     userApi     <- User.tests bConf mg brig cannon galley
     userAuthApi <- UserAuth.tests bConf mg lg brig
-    providerApi <- Provider.tests bConf (cert <$> iConf) mg db brig cannon galley
+    providerApi <- Provider.tests (provider <$> iConf) mg db brig cannon galley
     searchApis  <- Search.tests mg brig
     teamApis    <- Team.tests mg brig cannon galley
     turnApi     <- TURN.tests mg brig turnFile
