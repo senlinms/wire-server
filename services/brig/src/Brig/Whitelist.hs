@@ -19,7 +19,7 @@ import GHC.Generics
 import Network.HTTP.Client (HttpException (..), HttpExceptionContent (..), parseRequest)
 
 data Whitelist = Whitelist
-    { whitelistReq  :: !Text
+    { whitelistUrl  :: !Text
     , whitelistUser :: !Text
     , whitelistPass :: !Text
     } deriving (Show, Generic)
