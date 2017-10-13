@@ -24,7 +24,7 @@ data Whitelist = Whitelist
     , whitelistPass :: !Text
     } deriving (Show, Generic)
 
-instance FromJSON Whitelist where
+instance FromJSON Whitelist
 
 verify :: (MonadIO m, MonadMask m, MonadHttp m) => Whitelist -> Either Email Phone -> m Bool
 verify (Whitelist url user pass) key =

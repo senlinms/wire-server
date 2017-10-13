@@ -137,10 +137,10 @@ newtype ProviderTokenTimeout = ProviderTokenTimeout
     { providerTokenTimeoutSeconds :: Integer }
     deriving (Show, Generic)
 
-instance FromJSON UserTokenTimeout where
-instance FromJSON SessionTokenTimeout where
-instance FromJSON AccessTokenTimeout where
-instance FromJSON ProviderTokenTimeout where
+instance FromJSON UserTokenTimeout
+instance FromJSON SessionTokenTimeout
+instance FromJSON AccessTokenTimeout
+instance FromJSON ProviderTokenTimeout
 
 instance FromJSON Settings where
   parseJSON (Object v) =

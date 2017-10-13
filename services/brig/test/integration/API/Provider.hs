@@ -75,7 +75,7 @@ data Config = Config
     , cert         :: FilePath
     } deriving (Show, Generic)
 
-instance FromJSON Config where
+instance FromJSON Config
 
 tests :: Either ParseException Config -> Manager -> DB.ClientState -> Brig -> Cannon -> Galley -> IO TestTree
 tests conf p db b c g = do

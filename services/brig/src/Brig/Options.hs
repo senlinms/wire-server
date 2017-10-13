@@ -50,21 +50,21 @@ data Endpoint = Endpoint
     , port :: Word16
     } deriving (Show, Generic)
 
-instance FromJSON Endpoint where
+instance FromJSON Endpoint
 
 data CassandraOpts = CassandraOpts
     { endpoint :: Endpoint
     , keyspace :: Text
     } deriving (Show, Generic)
 
-instance FromJSON CassandraOpts where
+instance FromJSON CassandraOpts
 
 data ElasticSearchOpts = ElasticSearchOpts
     { url   :: Text
     , index :: Text
     } deriving (Show, Generic)
 
-instance FromJSON ElasticSearchOpts where
+instance FromJSON ElasticSearchOpts
 
 data AWSOpts = AWSOpts
     { account         :: Text
@@ -76,7 +76,7 @@ data AWSOpts = AWSOpts
     , awsSecretKey    :: (Maybe Aws.SecretAccessKey)
     } deriving (Show, Generic)
 
-instance FromJSON AWSOpts where
+instance FromJSON AWSOpts
 
 data EmailSMSGeneralOpts = EmailSMSGeneralOpts
     { templateDir :: FilePath
@@ -84,7 +84,7 @@ data EmailSMSGeneralOpts = EmailSMSGeneralOpts
     , smsSender   :: Text
     } deriving (Show, Generic)
 
-instance FromJSON EmailSMSGeneralOpts where
+instance FromJSON EmailSMSGeneralOpts
 
 data EmailUserOpts = EmailUserOpts
     { activationUrl     :: Text
@@ -94,7 +94,7 @@ data EmailUserOpts = EmailUserOpts
     , deletionUrl       :: Text
     } deriving (Show, Generic)
 
-instance FromJSON EmailUserOpts where
+instance FromJSON EmailUserOpts
 
 data ProviderOpts = ProviderOpts
     { homeUrl               :: Text
@@ -103,14 +103,14 @@ data ProviderOpts = ProviderOpts
     , approvalTo            :: Email
     } deriving (Show, Generic)
 
-instance FromJSON ProviderOpts where
+instance FromJSON ProviderOpts
 
 data TeamOpts = TeamOpts
     { tInvitationUrl :: Text
     , tActivationUrl :: Text
     } deriving (Show, Generic)
 
-instance FromJSON TeamOpts where
+instance FromJSON TeamOpts
 
 data EmailSMSOpts = EmailSMSOpts
     { general  :: EmailSMSGeneralOpts
@@ -119,7 +119,7 @@ data EmailSMSOpts = EmailSMSOpts
     , team     :: TeamOpts
     } deriving (Show, Generic)
 
-instance FromJSON EmailSMSOpts where
+instance FromJSON EmailSMSOpts
 
 data ZAuthOpts = ZAuthOpts
     { privateKeys  :: FilePath
@@ -127,7 +127,7 @@ data ZAuthOpts = ZAuthOpts
     , authSettings :: ZAuth.Settings
     } deriving (Show, Generic)
 
-instance FromJSON ZAuthOpts where
+instance FromJSON ZAuthOpts
 
 data TurnOpts = TurnOpts
     { servers  :: FilePath
@@ -135,7 +135,7 @@ data TurnOpts = TurnOpts
     , lifetime :: Word32
     } deriving (Show, Generic)
 
-instance FromJSON TurnOpts where
+instance FromJSON TurnOpts
 
 -- | Options that are consumed on startup
 data Opts = Opts
@@ -191,8 +191,8 @@ instance FromJSON ActivationTimeout where
     in pure $ ActivationTimeout $ secondsToDiffTime $ maybe defaultV fromIntegral bounded
   parseJSON v = typeMismatch "activationTimeout" v
 
-instance FromJSON Settings where
-instance FromJSON Opts where
+instance FromJSON Settings
+instance FromJSON Opts
 
 
 parseOptions :: IO Opts
