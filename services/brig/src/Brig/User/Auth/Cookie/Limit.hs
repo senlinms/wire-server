@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE OverloadedStrings          #-}
 
 module Brig.User.Auth.Cookie.Limit where
 
