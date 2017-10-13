@@ -140,27 +140,27 @@ instance FromJSON TurnOpts where
 -- | Options that are consumed on startup
 data Opts = Opts
     -- services
-    { brig          :: Endpoint
-    , galley        :: Endpoint
-    , gundeck       :: Endpoint
+    { brig          :: !Endpoint
+    , galley        :: !Endpoint
+    , gundeck       :: !Endpoint
 
     -- external
-    , cassandra     :: CassandraOpts
-    , elasticsearch :: ElasticSearchOpts
-    , aws           :: AWSOpts
+    , cassandra     :: !CassandraOpts
+    , elasticsearch :: !ElasticSearchOpts
+    , aws           :: !AWSOpts
 
     -- Email & SMS
-    , emailSMS      :: EmailSMSOpts
+    , emailSMS      :: !EmailSMSOpts
 
     -- ZAuth
-    , zauth         :: ZAuthOpts
+    , zauth         :: !ZAuthOpts
 
     -- Misc.
-    , discoUrl      :: Maybe Text
-    , geoDb         :: Maybe FilePath
+    , discoUrl      :: !(Maybe Text)
+    , geoDb         :: !(Maybe FilePath)
 
     -- TURN
-    , turn          :: TurnOpts
+    , turn          :: !TurnOpts
 
     -- Runtime settings
     , optSettings :: !Settings
@@ -169,14 +169,14 @@ data Opts = Opts
 -- | Options that persist as runtime settings.
 data Settings = Settings
     { setActivationTimeout  :: !ActivationTimeout
-    , setTwilioSID          :: Text
-    , setTwilioToken        :: Text
-    , setNexmoKey           :: Text
-    , setNexmoSecret        :: Text
+    , setTwilioSID          :: !Text
+    , setTwilioToken        :: !Text
+    , setNexmoKey           :: !Text
+    , setNexmoSecret        :: !Text
     , setNexmoEndpoint      :: !Nexmo.ApiEndpoint
     , setWhitelist          :: !(Maybe Whitelist)
     , setUserMaxConnections :: !Int64
-    , setCookieDomain       :: Text
+    , setCookieDomain       :: !Text
     , setCookieInsecure     :: !Bool
     , setUserCookieRenewAge :: !Integer
     , setUserCookieLimit    :: !Int
