@@ -50,7 +50,7 @@ decodeConfigFile = decodeFileEither
 
 runTests :: Either ParseException Config -> Either ParseException Opts.Opts -> IO ()
 runTests iConf bConf = do
-    let local p = Endpoint { epHost = "localhost", epPort = p }
+    let local p = Endpoint { epHost = "127.0.0.1", epPort = p }
     brig      <- mkRequest <$> Opts.optOrEnv confBrig iConf (local . read) "BRIG_WEB_PORT"
     cannon    <- mkRequest <$> Opts.optOrEnv confCannon iConf (local . read) "CANNON_WEB_PORT"
     galley    <- mkRequest <$> Opts.optOrEnv confGalley iConf (local . read) "GALLEY_WEB_PORT"
